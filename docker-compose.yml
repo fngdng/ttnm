@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  backend:
+    build: ./backend
+    ports:
+      - '8080:8080'
+    environment:
+      - NODE_ENV=development
+      - PORT=8080
+      - DB_DIALECT=sqlite
+      - DB_STORAGE=/data/expense_app.sqlite
+      - JWT_SECRET=replace-with-secret
+      - JWT_EXPIRES_IN=86400
+    volumes:
+      - ./backend:/usr/src/app:cached
+      - ./backend/expense_app.sqlite:/data/expense_app.sqlite
+    depends_on:
+      - frontend
+
+  frontend:
+    build: ./frontend
+    ports:
+      - '3000:80'
+    environment:
+      - REACT_APP_API_URL=http://localhost:8080
+    volumes:
+      - ./frontend:/app:cached
+
+# Note: In this compose setup frontend is served by nginx on port 3000 (mapped to nginx 80)
