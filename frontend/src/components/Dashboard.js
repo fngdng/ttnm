@@ -123,28 +123,30 @@ function Dashboard({ user, onLogout, onOpenSettings }) {
   /**
    * Render các thông báo chi tiêu
    */
-  const renderAlerts = () => {
+const renderAlerts = () => {
     
     const remaining = summary.monthlyLimit - summary.totalExpense;
     const vsLastMonth = summary.totalExpense - summary.lastMonthExpense;
+    const limitClass = remaining >= 0 ? 'dashboard-alert__item--positive' : 'dashboard-alert__item--negative';
+    const trendClass = vsLastMonth > 0 ? 'dashboard-alert__item--negative' : 'dashboard-alert__item--positive';
     
     return (
-      <div style={{ background: '#f4f7f6', padding: '15px', borderRadius: 8, marginTop: '20px' }}>
-        <h4>Thông báo Chi tiêu</h4>
+      <div className="dashboard-alert">
+        <h4>Thông báo chi tiêu</h4>
         {summary.monthlyLimit > 0 ? (
           remaining >= 0 ? (
-            <p style={{ color: 'green' }}>✅ Bạn còn <strong>{formatCurrency(remaining)}</strong> trước khi chạm hạn mức.</p>
+            <p className={`dashboard-alert__item ${limitClass}`}><span className="dashboard-alert__icon">✅</span> Bạn còn <strong>{formatCurrency(remaining)}</strong> trước khi chạm hạn mức.</p>
           ) : (
-            <p style={{ color: 'red' }}>🔥 <strong>CẢNH BÁO:</strong> Bạn đã chi vượt hạn mức <strong>{formatCurrency(Math.abs(remaining))}</strong>!</p>
+            <p className={`dashboard-alert__item ${limitClass}`}><span className="dashboard-alert__icon">🔥</span> <strong>Cảnh báo:</strong> Bạn đã chi vượt hạn mức <strong>{formatCurrency(Math.abs(remaining))}</strong>!</p>
           )
         ) : (
-          <p><i>Bạn chưa đặt hạn mức. (Vào Cài đặt)</i></p>
+          <p className="dashboard-alert__item dashboard-alert__item--neutral"><i>Bạn chưa đặt hạn mức. Hãy mở trang Cài đặt để thiết lập ngay.</i></p>
         )}
         
         {vsLastMonth > 0 ? (
-          <p>📉 Tháng này bạn đã chi <strong>nhiều hơn</strong> tháng trước {formatCurrency(vsLastMonth)}.</p>
+          <p className={`dashboard-alert__item ${trendClass}`}><span className="dashboard-alert__icon">📉</span> Tháng này bạn đã chi <strong>nhiều hơn</strong> tháng trước {formatCurrency(vsLastMonth)}.</p>
         ) : (
-          <p>📈 Tháng này bạn đã chi <strong>ít hơn</strong> tháng trước {formatCurrency(Math.abs(vsLastMonth))}.</p>
+          <p className={`dashboard-alert__item ${trendClass}`}><span className="dashboard-alert__icon">📈</span> Tháng này bạn đã chi <strong>ít hơn</strong> tháng trước {formatCurrency(Math.abs(vsLastMonth))}.</p>
         )}
       </div>
     );
@@ -152,77 +154,107 @@ function Dashboard({ user, onLogout, onOpenSettings }) {
 
   
   return (
-    <div style={{ maxWidth: 900, margin: '20px auto', padding: 20 }}>
-      {notification && <div style={{ padding: 10, background: '#fff8e1', textAlign: 'center', fontWeight: 'bold' }}>{notification}</div>}
+    <div className="dashboard-container">
+      {notification && <div className="dashboard-notification">{notification}</div>}
       
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h2>Xin chào, {user.username}!</h2>
-        <div>
-          <button onClick={() => onOpenSettings && onOpenSettings()} style={{ marginRight: 8 }}>Cài đặt</button>
-          <button onClick={onLogout} style={{ marginLeft: 10 }}>Đăng xuất</button>
+      <div className="dashboard-hero">
+        <div className="dashboard-hero__text">
+          <p className="dashboard-hero__greeting">Xin chào, <strong>{user.username}</strong> 👋</p>
+          <h1>Trang tổng quan tài chính</h1>
+          <p className="dashboard-hero__subtitle">Theo dõi thu chi, kiểm soát hạn mức và từng bước chạm tới mục tiêu tài chính.</p>
+        </div>
+        <div className="dashboard-hero__actions">
+          <button className="dashboard-btn dashboard-btn--ghost" onClick={() => onOpenSettings && onOpenSettings()}>Cài đặt hạn mức</button>
+          <button className="dashboard-btn dashboard-btn--danger" onClick={onLogout}>Đăng xuất</button>
         </div>
       </div>
       
-      
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3>Tóm tắt</h3>
-        <DateRangePicker startDate={range.firstDay} endDate={range.lastDay} onChange={(s,e)=> setRange({ firstDay: s, lastDay: e })} />
-      </div>
-      
-      <ChartSummary startDate={range.firstDay} endDate={range.lastDay} />
-  <div style={{ display: 'flex', gap: 15, justifyContent: 'space-around' }}>
-         <div style={{ padding: 15, border: '1px solid #ccc', borderRadius: 5, textAlign: 'center', flex: 1 }}>
-          <h4 style={{ margin: 0, color: 'green' }}>Tổng Thu</h4>
-          <p style={{ margin: 0, fontSize: 20, fontWeight: 'bold' }}>{formatCurrency(summary.totalIncome)}</p>
+      <div className="dashboard-section">
+        <div className="dashboard-section__header">
+          <h3>Tổng quan nhanh</h3>
+          <DateRangePicker startDate={range.firstDay} endDate={range.lastDay} onChange={(s,e)=> setRange({ firstDay: s, lastDay: e })} />
         </div>
-        <div style={{ padding: 15, border: '1px solid #ccc', borderRadius: 5, textAlign: 'center', flex: 1 }}>
-          <h4 style={{ margin: 0, color: 'red' }}>Tổng Chi</h4>
-          <p style={{ margin: 0, fontSize: 20, fontWeight: 'bold' }}>{formatCurrency(summary.totalExpense)}</p>
-        </div>
-        <div style={{ padding: 15, border: '1px solid #ccc', borderRadius: 5, textAlign: 'center', flex: 1 }}>
-          <h4 style={{ margin: 0, color: 'blue' }}>Số dư</h4>
-          <p style={{ margin: 0, fontSize: 20, fontWeight: 'bold' }}>{formatCurrency(summary.netBalance)}</p>
+        
+        <ChartSummary startDate={range.firstDay} endDate={range.lastDay} />
+        
+        <div className="dashboard-summary-grid">
+          <div className="dashboard-summary-card dashboard-summary-card--income">
+            <span className="dashboard-summary-card__label">Tổng thu</span>
+            <span className="dashboard-summary-card__value">{formatCurrency(summary.totalIncome)}</span>
+          </div>
+          <div className="dashboard-summary-card dashboard-summary-card--expense">
+            <span className="dashboard-summary-card__label">Tổng chi</span>
+            <span className="dashboard-summary-card__value">{formatCurrency(summary.totalExpense)}</span>
+          </div>
+          <div className="dashboard-summary-card dashboard-summary-card--balance">
+            <span className="dashboard-summary-card__label">Số dư</span>
+            <span className="dashboard-summary-card__value">{formatCurrency(summary.netBalance)}</span>
+          </div>
         </div>
       </div>
 
-  {renderAlerts()}
-  <HistoryChart startDate={range.firstDay} endDate={range.lastDay} />
-  <Categories onChange={() => fetchAllData()} />
+      {renderAlerts()}
 
-  <Categories />
-      
-      
-      <hr style={{ margin: '20px 0' }} />
-      <h3>Thêm Giao dịch</h3>
-      <form onSubmit={handleAddTransaction} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <input name="description" type="text" placeholder="Mô tả" required style={{ padding: 8 }} />
-        <input name="amount" type="number" placeholder="Số tiền" required style={{ padding: 8 }} min="0" />
-        <input name="date" type="date" required defaultValue={new Date().toISOString().split('T')[0]} style={{ padding: 8 }} />
-        <select name="type" style={{ padding: 8 }}>
-          <option value="expense">Chi tiêu</option>
-          <option value="income">Thu nhập</option>
-        </select>
-        <button type="submit" style={{ padding: 10, background: '#007bff', color: 'white', border: 'none' }}>Thêm</button>
-      </form>
-      
-      
-      <hr style={{ margin: '20px 0' }} />
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h3>Giao dịch gần đây</h3>
-        <button onClick={handleExport} style={{background: '#1D6F42', color: 'white', border: 'none', padding: '8px 12px', borderRadius: 5}}>
-          Xuất Excel (Tháng này)
-        </button>
+      <div className="dashboard-panel-grid">
+        <div className="dashboard-panel">
+          <div className="dashboard-panel__header">
+            <h3>Xu hướng thu - chi</h3>
+            <span className="dashboard-panel__hint">Số liệu theo tháng</span>
+          </div>
+          <HistoryChart startDate={range.firstDay} endDate={range.lastDay} />
+        </div>
+        <div className="dashboard-panel">
+          <div className="dashboard-panel__header">
+            <h3>Danh mục chi tiêu</h3>
+            <span className="dashboard-panel__hint">Cập nhật và sắp xếp danh mục</span>
+          </div>
+          <Categories onChange={() => fetchAllData()} />
+        </div>
       </div>
-      <ul style={{ listStyle: 'none', padding: 0 }}>
-        {transactions.map(tx => (
-          <li key={tx.id} onClick={() => { setSelectedTx(tx); setModalOpen(true); }} style={{ display: 'flex', justifyContent: 'space-between', padding: 10, borderBottom: '1px solid #eee', cursor: 'pointer' }}>
-            <span>{tx.description || '(Không mô tả)'} <em style={{ fontSize: '0.9em', color: '#555' }}>({tx.date})</em></span>
-            <span style={{ fontWeight: 'bold', color: tx.type === 'expense' ? 'red' : 'green' }}>
-              {tx.type === 'expense' ? '-' : '+'}{formatCurrency(tx.amount)}
-            </span>
-          </li>
-        ))}
-      </ul>
+
+      <div className="dashboard-section">
+        <div className="dashboard-panel">
+          <div className="dashboard-panel__header">
+            <h3>Thêm giao dịch</h3>
+            <span className="dashboard-panel__hint">Ghi lại khoản thu hoặc chi trong ngày</span>
+          </div>
+          <form onSubmit={handleAddTransaction} className="dashboard-form">
+            <input name="description" type="text" placeholder="Mô tả" required minLength={2} />
+            <input name="amount" type="number" placeholder="Số tiền" required min="0" />
+            <input name="date" type="date" required defaultValue={new Date().toISOString().split('T')[0]} />
+            <select name="type">
+              <option value="expense">Chi tiêu</option>
+              <option value="income">Thu nhập</option>
+            </select>
+            <button type="submit" className="dashboard-btn dashboard-btn--primary">Thêm giao dịch</button>
+          </form>
+        </div>
+      </div>
+
+      <div className="dashboard-section">
+        <div className="dashboard-panel">
+          <div className="dashboard-section__header">
+            <h3>Giao dịch gần đây</h3>
+            <button onClick={handleExport} className="dashboard-btn dashboard-btn--success">
+              Xuất Excel (tháng này)
+            </button>
+          </div>
+          <ul className="dashboard-transaction-list">
+            {transactions.map(tx => (
+              <li key={tx.id} onClick={() => { setSelectedTx(tx); setModalOpen(true); }} className="dashboard-transaction-item">
+                <div className="dashboard-transaction-item__info">
+                  <span className="dashboard-transaction-item__title">{tx.description || 'Không có mô tả'}</span>
+                  <span className="dashboard-transaction-item__date">{tx.date}</span>
+                </div>
+                <span className={`dashboard-transaction-item__amount ${tx.type === 'expense' ? 'is-expense' : 'is-income'}`}>
+                  {tx.type === 'expense' ? '-' : '+'}{formatCurrency(tx.amount)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      
       <TransactionModal open={modalOpen} transaction={selectedTx} onClose={() => setModalOpen(false)} onSaved={() => { setModalOpen(false); fetchAllData(); }} />
     </div>
   );

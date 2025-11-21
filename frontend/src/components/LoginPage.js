@@ -78,8 +78,8 @@ function LoginPage({ onLogin, onNavigateToRegister }) {
       <div className="auth-card">
         <div className="auth-header">
           <div className="auth-logo">
-            <div className="logo-icon">$</div>
-            <h1>Expense Manager</h1>
+            <div className="logo-icon">₫</div>
+            <h1>Quản lý Chi tiêu</h1>
           </div>
           <p className="auth-subtitle">Đăng nhập để quản lý chi tiêu của bạn</p>
         </div>

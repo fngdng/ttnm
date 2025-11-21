@@ -27,14 +27,14 @@ export default function HistoryChart({ startDate, endDate }) {
         });
   const arr = Array.from(map.values()).sort((a,b)=> a.month.localeCompare(b.month));
         setData(arr);
-      } catch (err) { console.error(err); }
+      } catch (err) { console.error('Lỗi tải lịch sử giao dịch:', err); }
       finally { setLoading(false); }
     };
     if (startDate && endDate) fetch();
   }, [startDate, endDate]);
 
-  if (loading) return <div>Loading history...</div>;
-  if (!data || data.length === 0) return <div>No history data in this range.</div>;
+  if (loading) return <div>Đang tải lịch sử...</div>;
+  if (!data || data.length === 0) return <div>Không có dữ liệu lịch sử trong khoảng thời gian này.</div>;
 
   return (
     <div style={{ width: '100%', height: 300, marginTop: 20 }}>

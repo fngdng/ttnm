@@ -14,12 +14,12 @@ export default function ChartSummary({ startDate, endDate }) {
       try {
         const res = await apiClient.get(`/reports/by-category?startDate=${startDate}&endDate=${endDate}&type=expense`);
         const normalized = res.data.map(item => ({
-          name: item.Category ? item.Category.name : (item.name || `Category ${item.categoryId}`),
+          name: item.Category ? item.Category.name : (item.name || `Danh mục ${item.categoryId}`),
           value: Number(item.totalAmount || item.totalAmount || 0)
         }));
         setData(normalized);
       } catch (err) {
-        console.error('Error fetching category report:', err);
+        console.error('Lỗi tải báo cáo danh mục:', err);
       } finally {
         setLoading(false);
       }
@@ -27,8 +27,8 @@ export default function ChartSummary({ startDate, endDate }) {
     if (startDate && endDate) fetch();
   }, [startDate, endDate]);
 
-  if (loading) return <div>Loading chart...</div>;
-  if (!data || data.length === 0) return <div>No expense data for this period.</div>;
+  if (loading) return <div>Đang tải biểu đồ...</div>;
+  if (!data || data.length === 0) return <div>Không có dữ liệu chi tiêu trong khoảng thời gian này.</div>;
 
   return (
     <div style={{ width: '100%', height: 300 }}>

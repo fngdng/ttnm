@@ -56,7 +56,7 @@ function SettingsPage({ isFirstTime = false, onLimitSet }) {
         <input
           id="limit"
           type="number"
-          placeholder="e.g., 5000000"
+          placeholder="Ví dụ: 5000000"
           value={limit}
           onChange={(e) => setLimit(e.target.value)}
           style={{ padding: 10 }}
