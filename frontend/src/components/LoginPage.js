@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import apiClient from '../services/api';
 import { useToast } from './ToastProvider';
 import './Auth.css';

@@ -60,11 +60,13 @@ function ToastItem({ toast, index, onRemove }) {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      handleClose();
+      // start leave animation and remove after animation
+      setIsLeaving(true);
+      setTimeout(() => onRemove(toast.id), 300);
     }, toast.ttl);
-    
+
     return () => clearTimeout(timer);
-  }, [toast.ttl]);
+  }, [toast.ttl, onRemove, toast.id]);
 
   const getToastIcon = (type) => {
     switch (type) {

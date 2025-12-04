@@ -65,7 +65,7 @@ function RegisterPage({ onNavigateToLogin }) {
     setErrors({});
     
     try {
-      const response = await apiClient.post('/auth/signup', {
+      await apiClient.post('/auth/signup', {
         username: formData.username,
         email: formData.email,
         password: formData.password

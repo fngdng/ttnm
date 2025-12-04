@@ -100,6 +100,7 @@ export default function ScanBills({ onSaved }) {
         const found = deepFindAmount(data.parsed) || deepFindAmount(data) || null;
         if (found) {
           // strip currency words and keep numbers, dots and commas
+          // eslint-disable-next-line no-useless-escape
           const s = String(found).replace(/[^0-9.,\/-]/g, '').trim();
           if (s) amount = s;
         }
