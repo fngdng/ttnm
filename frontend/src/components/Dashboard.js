@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { socket } from '../services/socket';
 import apiClient from '../services/api';
 import ChartSummary from './ChartSummary';
@@ -6,6 +6,7 @@ import Categories from './Categories';
 import HistoryChart from './HistoryChart';
 import DateRangePicker from './DateRangePicker';
 import TransactionModal from './TransactionModal';
+import ScanBills from './ScanBills';
 import './dashboard.css';
 
 const formatCurrency = (num) => {
@@ -44,7 +45,7 @@ function Dashboard({ user, onLogout, onOpenSettings }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedTx, setSelectedTx] = useState(null);
 
-  const fetchAllData = async () => {
+  const fetchAllData = useCallback(async () => {
     try {
       const { firstDay, lastDay } = range;
       const [summaryRes, transactionsRes] = await Promise.all([
@@ -57,7 +58,7 @@ function Dashboard({ user, onLogout, onOpenSettings }) {
     } catch (error) {
       console.error('Lỗi tải dữ liệu:', error);
     }
-  };
+  }, [range]);
 
   useEffect(() => {
     fetchAllData();
@@ -76,9 +77,9 @@ function Dashboard({ user, onLogout, onOpenSettings }) {
       socket.off('transaction_updated');
       socket.disconnect();
     };
-  }, [user.id]);
+  }, [user.id, fetchAllData]);
 
-  useEffect(() => { fetchAllData(); }, [range]);
+  useEffect(() => { fetchAllData(); }, [fetchAllData]);
 
   const handleAddTransaction = async (e) => {
     e.preventDefault();
@@ -228,6 +229,16 @@ const renderAlerts = () => {
             </select>
             <button type="submit" className="dashboard-btn dashboard-btn--primary">Thêm giao dịch</button>
           </form>
+        </div>
+      </div>
+
+      <div className="dashboard-section">
+        <div className="dashboard-panel">
+          <div className="dashboard-panel__header">
+            <h3>Quét hoá đơn / biên lai</h3>
+            <span className="dashboard-panel__hint">Tải ảnh hoá đơn để tự động trích xuất thông tin</span>
+          </div>
+          <ScanBills onSaved={() => fetchAllData()} />
         </div>
       </div>
 

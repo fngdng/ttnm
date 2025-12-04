@@ -21,6 +21,7 @@ require('./routes/user.routes')(app);
 require('./routes/category.routes')(app);
 require('./routes/budget.routes')(app);
 require('./routes/report.routes')(app);
+require('./routes/mindee.routes')(app);
 
 app.get('/api/welcome', (req, res) => {
   res.json({ message: 'Welcome to Expense Manager API.' });

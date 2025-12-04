@@ -2,21 +2,48 @@ import React, { useEffect, useState } from 'react';
 import apiClient from '../services/api';
 import { useToast } from './ToastProvider';
 
-export default function TransactionModal({ open, transaction, onClose, onSaved }) {
+
+export default function TransactionModal({ open, transaction, prefill, onClose, onSaved }) {
   const [form, setForm] = useState({ description: '', amount: '', date: '', type: 'expense' });
   const [loading, setLoading] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
-    if (transaction) {
-      setForm({
-        description: transaction.description || '',
-        amount: transaction.amount || '',
-        date: transaction.date || new Date().toISOString().split('T')[0],
-        type: transaction.type || 'expense'
-      });
+    // When modal opens or transaction prop changes, populate the form.
+    if (open && (transaction || prefill)) {
+      try {
+        // Prefer non-empty prefill values from scanner over existing transaction values.
+        const pick = (prefVal, txVal) => {
+          if (prefVal === undefined || prefVal === null) return txVal;
+          if (typeof prefVal === 'string' && prefVal.trim() === '') return txVal;
+          return prefVal;
+        };
+
+        const amountSrc = pick(prefill && prefill.amount, transaction && transaction.amount);
+        const dateSrc = pick(prefill && prefill.date, transaction && transaction.date);
+        const descSrc = pick(prefill && prefill.description, transaction && transaction.description);
+        const typeSrc = pick(prefill && prefill.type, transaction && transaction.type) || 'expense';
+
+        const amountStr = amountSrc !== undefined && amountSrc !== null ? String(amountSrc) : '';
+        const dateStr = dateSrc ? (typeof dateSrc === 'string' ? dateSrc.slice(0,10) : new Date(dateSrc).toISOString().slice(0,10)) : new Date().toISOString().split('T')[0];
+        setForm({
+          description: descSrc || '',
+          amount: amountStr,
+          date: dateStr,
+          type: typeSrc
+        });
+        // helpful debug log if values are unexpectedly empty
+        // eslint-disable-next-line no-console
+        console.log('TransactionModal: populated form', { amount: amountStr, date: dateStr, transaction, prefill });
+      } catch (e) {
+        console.warn('TransactionModal: failed to populate form', e && e.message ? e.message : e);
+      }
     }
-  }, [transaction]);
+    // If modal closed, reset form to defaults
+    if (!open) {
+      setForm({ description: '', amount: '', date: new Date().toISOString().slice(0,10), type: 'expense' });
+    }
+  }, [transaction, prefill, open]);
 
   if (!open) return null;
 
@@ -28,12 +55,19 @@ export default function TransactionModal({ open, transaction, onClose, onSaved }
     try {
       if (transaction && transaction.id) {
         await apiClient.put(`/transactions/${transaction.id}`, form);
+      } else {
+        // create new transaction
+        await apiClient.post('/transactions', form);
       }
       if (onSaved) onSaved();
       onClose();
     } catch (err) {
       console.error('Lỗi lưu giao dịch:', err);
-      toast.push('Lưu giao dịch thất bại', 'error');
+      // show server-provided message when available
+      const serverMsg = err.response && (err.response.data && (err.response.data.message || err.response.data.details))
+        ? (err.response.data.message || JSON.stringify(err.response.data.details))
+        : (err.message || 'Lưu giao dịch thất bại');
+      toast.push(serverMsg, 'error');
     } finally { setLoading(false); }
   };
 

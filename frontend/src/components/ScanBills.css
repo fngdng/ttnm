@@ -1,0 +1,86 @@
+.scan-bills {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  font-family: inherit;
+}
+
+.scan-bills h3 {
+  margin: 0 0 12px 0;
+  font-size: 1.05rem;
+}
+
+.scan-bills input[type="file"] {
+  display: block;
+}
+
+.scan-bills img {
+  display: block;
+  width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+  border-radius: 6px;
+  border: 1px solid #eee;
+}
+
+.scan-bills .controls {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+}
+
+.scan-bills button {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.scan-bills button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.scan-bills button.secondary {
+  background: #f3f4f6;
+  color: #111827;
+  border: 1px solid #e5e7eb;
+}
+
+.scan-bills .parsed-panel {
+  width: 360px;
+}
+
+.scan-bills label {
+  display: block;
+  font-size: 0.9rem;
+  color: #111827;
+}
+
+.scan-bills input[type="text"],
+.scan-bills input[type="date"],
+.scan-bills input[type="number"],
+.scan-bills select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 6px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+  .scan-bills {
+    padding: 12px;
+  }
+  .scan-bills .parsed-panel {
+    width: 100%;
+  }
+  .scan-bills > div {
+    flex-direction: column;
+  }
+}
