@@ -24,7 +24,7 @@ app.use((req, res, next) => {
 io.on('connection', (socket) => {
   console.log(`Một client đã kết nối: ${socket.id}`);
   socket.on('join_room', (userId) => {
-    socket.join(userId);
+    socket.join(`user_${userId}`);
     console.log(`Socket ${socket.id} đã tham gia phòng của user ${userId}`);
   });
 

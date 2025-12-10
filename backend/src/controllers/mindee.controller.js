@@ -224,6 +224,17 @@ exports.scan = async (req, res) => {
               categoryId: matchedCategoryId,
               userId: req.userId
             });
+            // emit socket event so Dashboard updates in real-time
+            try {
+              if (req.io && typeof req.io.to === 'function') {
+                req.io.to(`user_${req.userId}`).emit('transaction_updated', {
+                  message: 'Scanned transaction saved!',
+                  userId: req.userId
+                });
+              }
+            } catch (e) {
+              console.warn('Socket emit failed (mindee auto-save):', e && e.message ? e.message : e);
+            }
             return res.send({ parsed: parsedResult, raw: httpData || resp, saved: true, transaction: newTx });
           } catch (e) {
             console.error('Failed to save transaction:', e && e.message ? e.message : e);

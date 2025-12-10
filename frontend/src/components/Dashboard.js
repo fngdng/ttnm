@@ -95,8 +95,9 @@ function Dashboard({ user, onLogout, onOpenSettings }) {
     try {
       await apiClient.post('/transactions', payload);
       form.reset();
-      
       form.date.value = new Date().toISOString().split('T')[0];
+      // Tải lại dữ liệu để cập nhật số tiền
+      fetchAllData();
     } catch (error) {
       alert('Thêm giao dịch thất bại');
     }

@@ -20,10 +20,10 @@ exports.create = async (req, res) => {
     
     
     try {
-      if (req.io && typeof req.io.emit === 'function') {
-        req.io.emit('transaction_updated', {
+      if (req.io && typeof req.io.to === 'function') {
+        req.io.to(`user_${req.userId}`).emit('transaction_updated', {
           message: 'Một giao dịch mới đã được thêm!',
-          userId: req.userId // Gửi kèm userId để client tự lọc
+          userId: req.userId
         });
       }
     } catch (e) {
@@ -93,7 +93,7 @@ exports.update = async (req, res) => {
 
     if (num == 1) {
       try {
-        if (req.io && typeof req.io.emit === 'function') req.io.emit('transaction_updated', { message: `Giao dịch ${id} đã cập nhật!`, userId: req.userId });
+        if (req.io && typeof req.io.to === 'function') req.io.to(`user_${req.userId}`).emit('transaction_updated', { message: `Giao dịch ${id} đã cập nhật!`, userId: req.userId });
       } catch (e) { console.warn('Socket emit failed (update):', e && e.message ? e.message : e); }
       res.send({ message: 'Transaction was updated successfully.' });
     } else {
@@ -112,7 +112,7 @@ exports.delete = async (req, res) => {
     });
 
     if (num == 1) {
-      try { if (req.io && typeof req.io.emit === 'function') req.io.emit('transaction_updated', { message: `Giao dịch ${id} đã bị xóa!`, userId: req.userId }); } catch (e) { console.warn('Socket emit failed (delete):', e && e.message ? e.message : e); }
+      try { if (req.io && typeof req.io.to === 'function') req.io.to(`user_${req.userId}`).emit('transaction_updated', { message: `Giao dịch ${id} đã bị xóa!`, userId: req.userId }); } catch (e) { console.warn('Socket emit failed (delete):', e && e.message ? e.message : e); }
       res.send({ message: 'Transaction was deleted successfully!' });
     } else {
       res.status(404).send({ message: `Cannot delete Transaction with id=${id}.` });
