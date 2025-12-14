@@ -1,86 +1,295 @@
 .scan-bills {
   background: #fff;
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(34, 197, 94, 0.15);
   font-family: inherit;
 }
 
-.scan-bills h3 {
-  margin: 0 0 12px 0;
-  font-size: 1.05rem;
+.scan-bills__header {
+  margin-bottom: 24px;
 }
 
-.scan-bills input[type="file"] {
+.scan-bills__header h3 {
+  margin: 0 0 6px 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #166534;
+}
+
+.scan-bills__hint {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.scan-bills__content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.scan-bills__upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.scan-bills__file-area {
+  position: relative;
+  width: 100%;
+}
+
+.scan-bills__file-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.scan-bills__file-label {
   display: block;
+  cursor: pointer;
+  width: 100%;
 }
 
-.scan-bills img {
+.scan-bills__file-placeholder {
+  border: 2px dashed #86efac;
+  border-radius: 16px;
+  padding: 48px 24px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.scan-bills__file-placeholder:hover {
+  border-color: #22c55e;
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(34, 197, 94, 0.2);
+}
+
+.scan-bills__file-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+
+.scan-bills__file-text {
+  margin: 0 0 6px 0;
+  font-size: 1rem;
+  color: #166534;
+}
+
+.scan-bills__file-text strong {
+  color: #16a34a;
+}
+
+.scan-bills__file-hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.scan-bills__preview-wrapper {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid #dcfce7;
+  background: #f0fdf4;
+  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.15);
+}
+
+.scan-bills__preview {
   display: block;
   width: 100%;
-  max-height: 320px;
+  max-height: 400px;
   object-fit: contain;
-  border-radius: 6px;
-  border: 1px solid #eee;
+  background: #fff;
 }
 
-.scan-bills .controls {
-  margin-top: 10px;
-  display: flex;
-  gap: 8px;
-}
-
-.scan-bills button {
-  background: #2563eb;
-  color: #fff;
+.scan-bills__preview-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   border: none;
-  padding: 8px 12px;
-  border-radius: 6px;
+  background: rgba(239, 68, 68, 0.9);
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 700;
   cursor: pointer;
-  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.scan-bills button[disabled] {
+.scan-bills__preview-close:hover {
+  background: #ef4444;
+  transform: scale(1.1);
+}
+
+.scan-bills__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.scan-bills__btn {
+  padding: 12px 24px;
+  border-radius: 12px;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  justify-content: center;
+  min-width: 160px;
+}
+
+.scan-bills__btn--primary {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.scan-bills__btn--primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+}
+
+.scan-bills__btn--primary:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
-.scan-bills button.secondary {
-  background: #f3f4f6;
-  color: #111827;
-  border: 1px solid #e5e7eb;
+.scan-bills__btn--secondary {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
 }
 
-.scan-bills .parsed-panel {
-  width: 360px;
+.scan-bills__btn--secondary:hover {
+  background: #e2e8f0;
+  transform: translateY(-2px);
 }
 
-.scan-bills label {
-  display: block;
+.scan-bills__spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.scan-bills__parsed-section {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-radius: 16px;
+  padding: 20px;
+  border: 2px solid #86efac;
+}
+
+.scan-bills__parsed-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.scan-bills__parsed-header h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #166534;
+}
+
+.scan-bills__parsed-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #22c55e;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 0.9rem;
-  color: #111827;
+  font-weight: 700;
 }
 
-.scan-bills input[type="text"],
-.scan-bills input[type="date"],
-.scan-bills input[type="number"],
-.scan-bills select {
+.scan-bills__parsed-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.scan-bills__parsed-item {
   width: 100%;
-  padding: 8px;
-  margin-top: 6px;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
+}
+
+.scan-bills__label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.scan-bills__label-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #166534;
+}
+
+.scan-bills__input,
+.scan-bills__select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid #dcfce7;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  background: #fff;
+  color: #223044;
+  transition: all 0.2s ease;
   box-sizing: border-box;
 }
 
-@media (max-width: 900px) {
+.scan-bills__input:focus,
+.scan-bills__select:focus {
+  outline: none;
+  border-color: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.25);
+}
+
+.scan-bills__input::placeholder {
+  color: #94a3b8;
+}
+
+@media (max-width: 768px) {
   .scan-bills {
-    padding: 12px;
+    padding: 16px;
   }
-  .scan-bills .parsed-panel {
-    width: 100%;
+
+  .scan-bills__file-placeholder {
+    padding: 32px 16px;
   }
-  .scan-bills > div {
-    flex-direction: column;
+
+  .scan-bills__file-icon {
+    font-size: 2.5rem;
+  }
+
+  .scan-bills__btn {
+    min-width: 100%;
   }
 }

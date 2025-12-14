@@ -1,12 +1,21 @@
 body {
   margin: 0;
-  background: radial-gradient(circle at top left, rgba(99, 102, 241, 0.18), transparent 45%),
-    radial-gradient(circle at bottom right, rgba(14, 165, 233, 0.18), transparent 40%),
-    #eef2ff;
+  background: radial-gradient(circle at top left, rgba(34, 197, 94, 0.15), transparent 45%),
+    radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.15), transparent 40%),
+    #f0fdf4;
   font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
   color: #223044;
 }
 
 .App {
   min-height: 100vh;
+}
+
+
+body.dashboard-active {
+  background: #fefce8 !important;
+}
+
+.App:has(.dashboard-container) {
+  background: #fefce8;
 }

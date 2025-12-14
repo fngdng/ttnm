@@ -279,58 +279,150 @@ export default function ScanBills({ onSaved }) {
 
   return (
     <>
-    <div className="scan-bills" style={{ padding: 12, border: '1px solid #eee', borderRadius: 6, maxWidth: 720 }}>
-      <h3>Scan Bill / Receipt</h3>
+    <div className="scan-bills">
+      <div className="scan-bills__header">
+        <h3>Quét hóa đơn / biên lai </h3>
+        <p className="scan-bills__hint">Tải ảnh hóa đơn để tự động trích xuất thông tin</p>
+      </div>
 
-      <div style={{ display: 'flex', gap: 12 }}>
-        <div style={{ flex: 1 }}>
-          <input type="file" accept="image/*" onChange={handleFileChange} />
-          {preview && <div style={{ marginTop: 8 }}><img src={preview} alt="preview" style={{ maxWidth: '100%', maxHeight: 320 }} /></div>}
-          <div style={{ marginTop: 8 }}>
-            <button onClick={handleUpload} disabled={loading || !file} style={{ marginRight: 8 }}>{loading ? 'Scanning...' : 'Scan with Mindee'}</button>
-            <button onClick={() => { setFile(null); setPreview(null); setParsed({ amount: '', date: '', vendor: '' }); }}>Clear</button>
+      <div className="scan-bills__content">
+        <div className="scan-bills__upload-section">
+          <div className="scan-bills__file-area">
+            {!preview ? (
+              <label className="scan-bills__file-label">
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handleFileChange}
+                  className="scan-bills__file-input"
+                />
+                <div className="scan-bills__file-placeholder">
+                  <div className="scan-bills__file-icon">📷</div>
+                  <p className="scan-bills__file-text">
+                    <strong>Click để chọn ảnh</strong> hoặc kéo thả vào đây
+                  </p>
+                  <p className="scan-bills__file-hint">Hỗ trợ: JPG, PNG, PDF</p>
+                </div>
+              </label>
+            ) : (
+              <div className="scan-bills__preview-wrapper">
+                <img src={preview} alt="Preview" className="scan-bills__preview" />
+                <button 
+                  className="scan-bills__preview-close"
+                  onClick={() => { setFile(null); setPreview(null); setParsed({ amount: '', date: '', vendor: '' }); }}
+                  title="Xóa ảnh"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+          </div>
+
+          <div className="scan-bills__actions">
+            <button 
+              className="scan-bills__btn scan-bills__btn--primary"
+              onClick={handleUpload} 
+              disabled={loading || !file}
+            >
+              {loading ? (
+                <>
+                  <span className="scan-bills__spinner"></span>
+                  Đang quét...
+                </>
+              ) : (
+                <>
+                  🔍 Quét với Mindee
+                </>
+              )}
+            </button>
+            {file && (
+              <button 
+                className="scan-bills__btn scan-bills__btn--secondary"
+                onClick={() => { setFile(null); setPreview(null); setParsed({ amount: '', date: '', vendor: '' }); }}
+              >
+                Xóa
+              </button>
+            )}
           </div>
         </div>
 
-        <div style={{ width: 360 }}>
-          <h4>Parsed</h4>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <label>
-              Amount
-              <input value={parsed.amount} onChange={(e) => setParsed({ ...parsed, amount: e.target.value })} style={{ width: '100%', padding: 8 }} />
-            </label>
-            <label>
-              Date
-              <input type="date" value={parsed.date} onChange={(e) => setParsed({ ...parsed, date: e.target.value })} style={{ width: '100%', padding: 8 }} />
-            </label>
-            <label>
-              Vendor / Description
-              <input value={description} onChange={(e) => setDescription(e.target.value)} style={{ width: '100%', padding: 8 }} />
-            </label>
+        {(parsed.amount || parsed.date || parsed.vendor) && (
+          <div className="scan-bills__parsed-section">
+            <div className="scan-bills__parsed-header">
+              <h4>Thông tin đã trích xuất</h4>
+              <span className="scan-bills__parsed-badge">✓</span>
+            </div>
+            <div className="scan-bills__parsed-content">
+              <div className="scan-bills__parsed-item">
+                <label className="scan-bills__label">
+                  <span className="scan-bills__label-text">Số tiền</span>
+                  <input 
+                    type="text"
+                    value={parsed.amount} 
+                    onChange={(e) => setParsed({ ...parsed, amount: e.target.value })} 
+                    className="scan-bills__input"
+                    placeholder="0"
+                  />
+                </label>
+              </div>
+              
+              <div className="scan-bills__parsed-item">
+                <label className="scan-bills__label">
+                  <span className="scan-bills__label-text">Ngày</span>
+                  <input 
+                    type="date" 
+                    value={parsed.date} 
+                    onChange={(e) => setParsed({ ...parsed, date: e.target.value })} 
+                    className="scan-bills__input"
+                  />
+                </label>
+              </div>
 
-            <label>
-              Category
-              <select value={categoryId || ''} onChange={(e) => setCategoryId(e.target.value)} style={{ width: '100%', padding: 8 }}>
-                <option value="">(No category)</option>
-                {categories.filter(c => c.type === type).map(c => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
-            </label>
+              <div className="scan-bills__parsed-item">
+                <label className="scan-bills__label">
+                  <span className="scan-bills__label-text">Nhà cung cấp / Mô tả</span>
+                  <input 
+                    type="text"
+                    value={description} 
+                    onChange={(e) => setDescription(e.target.value)} 
+                    className="scan-bills__input"
+                    placeholder="Nhập mô tả..."
+                  />
+                </label>
+              </div>
 
-            <label>
-              Type
-              <select value={type} onChange={(e) => setType(e.target.value)} style={{ width: '100%', padding: 8 }}>
-                <option value="expense">Expense</option>
-                <option value="income">Income</option>
-              </select>
-            </label>
+              <div className="scan-bills__parsed-item">
+                <label className="scan-bills__label">
+                  <span className="scan-bills__label-text">Loại</span>
+                  <select 
+                    value={type} 
+                    onChange={(e) => setType(e.target.value)} 
+                    className="scan-bills__select"
+                  >
+                    <option value="expense">Chi tiêu</option>
+                    <option value="income">Thu nhập</option>
+                  </select>
+                </label>
+              </div>
 
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button onClick={handleSave}>Save Transaction</button>
+              <div className="scan-bills__parsed-item">
+                <label className="scan-bills__label">
+                  <span className="scan-bills__label-text">Danh mục</span>
+                  <select 
+                    value={categoryId || ''} 
+                    onChange={(e) => setCategoryId(e.target.value)} 
+                    className="scan-bills__select"
+                  >
+                    <option value="">Chọn danh mục...</option>
+                    {categories.filter(c => c.type === type).map(c => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
+                </label>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
     {
